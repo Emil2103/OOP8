@@ -1,0 +1,57 @@
+G
+maxcount 100
+count 3
+Flag False
+C
+RelocateFlag True
+Selected True
+Boarders:
+x 1
+y 1
+width 734
+height 480
+
+OValue 50
+xShape 540
+yShape 216
+color Black
+C
+RelocateFlag True
+Selected True
+Boarders:
+x 1
+y 1
+width 734
+height 480
+
+OValue 50
+xShape 605
+yShape 333
+color Black
+C
+RelocateFlag True
+Selected True
+Boarders:
+x 1
+y 1
+width 734
+height 480
+
+OValue 50
+xShape 454
+yShape 333
+color Black
+
+C
+RelocateFlag False
+Selected False
+Boarders:
+x 1
+y 1
+width 734
+height 480
+
+OValue 50
+xShape 504
+yShape 255
+color Black
