@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace OOP8
 {
-    class CCircle : Object
+    public class CCircle : Object
     {
         public CCircle()
         {

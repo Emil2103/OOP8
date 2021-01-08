@@ -12,7 +12,7 @@ using System.IO;
 
 namespace OOP8
 {
-    public abstract class Object : ISerializable
+    public abstract class Object : ISerializable, IObserver, ISubject
     {
         public int x;
         public int y;
@@ -28,11 +28,28 @@ namespace OOP8
         protected char code;
         public static int ID = 0;
 
+        protected List<IObserver> observers = new List<IObserver>();
+
         public virtual void DrawShape(Graphics G)
         {
             Pen pen = new Pen(color, 2);
             redpen.Width = 2;
             G.DrawPath(selected ? redpen : pen, myPath);
+        }
+
+        public int getID()
+        {
+            return id;
+        }
+
+        public int getX()
+        {
+            return x;
+        }
+
+        public int getY()
+        {
+            return y;
         }
 
         public virtual bool Popal(int x, int y)
@@ -45,7 +62,10 @@ namespace OOP8
             OValue = OValue + dx;
             createShape();
             if (!flag)
+            {
                 outOfBounds();
+                notifyEveryone();
+            }
         }
 
         public virtual void Move(int dx, int dy)
@@ -54,7 +74,10 @@ namespace OOP8
             y = y + dy;
             createShape();
             if (!flag)
+            {
                 outOfBounds();
+                notifyEveryone();
+            }
         }
 
         public abstract void createShape();
@@ -96,11 +119,18 @@ namespace OOP8
         public virtual void setSelect(bool value)
         {
             selected = value;
+            if (!flag)
+                notifyEveryone();
         }
 
         public virtual void setFlag(bool value)
         {
             flag = value;
+        }
+
+        public bool getFlag()
+        {
+            return flag;
         }
 
         public virtual void setRectangleF(RectangleF value)
@@ -196,6 +226,38 @@ namespace OOP8
                     }
             }
 
+        }
+        
+        public void addObserver(IObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void removeObserver(IObserver observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public void notifyEveryone()
+        {
+            for (int i = 0; i < observers.Count(); i++)
+                observers[i].onSubjectChanged(this);
+        }
+
+        public virtual void onSubjectChanged(ISubject subject)
+        {
+            if(subject is GooRectangle)
+            {
+                if (!flag)
+                    Move((subject as GooRectangle).deltaX, (subject as GooRectangle).deltaY);
+                else
+                    subject.removeObserver(this);
+            }
+        }
+
+        public virtual bool IntersectionShapes(GraphicsPath pth)
+        {
+            return myPath.GetBounds().IntersectsWith(pth.GetBounds());
         }
     }
 }

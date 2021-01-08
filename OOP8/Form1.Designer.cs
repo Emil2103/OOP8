@@ -39,22 +39,26 @@
             this.UnGroup = new System.Windows.Forms.Button();
             this.Save = new System.Windows.Forms.Button();
             this.Load = new System.Windows.Forms.Button();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.button1 = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.sheet)).BeginInit();
             this.SuspendLayout();
             // 
             // sheet
             // 
+            this.sheet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sheet.Location = new System.Drawing.Point(12, 37);
             this.sheet.Name = "sheet";
             this.sheet.Size = new System.Drawing.Size(738, 482);
             this.sheet.TabIndex = 0;
             this.sheet.TabStop = false;
-            this.sheet.Paint += new System.Windows.Forms.PaintEventHandler(this.sheet_Paint);
             this.sheet.MouseClick += new System.Windows.Forms.MouseEventHandler(this.sheet_MouseClick);
             // 
             // DrCirc
             // 
+            this.DrCirc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DrCirc.Location = new System.Drawing.Point(766, 37);
             this.DrCirc.Name = "DrCirc";
             this.DrCirc.Size = new System.Drawing.Size(75, 30);
@@ -65,6 +69,7 @@
             // 
             // DrRec
             // 
+            this.DrRec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DrRec.Location = new System.Drawing.Point(766, 73);
             this.DrRec.Name = "DrRec";
             this.DrRec.Size = new System.Drawing.Size(75, 30);
@@ -75,6 +80,7 @@
             // 
             // DrTr
             // 
+            this.DrTr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DrTr.Location = new System.Drawing.Point(766, 109);
             this.DrTr.Name = "DrTr";
             this.DrTr.Size = new System.Drawing.Size(75, 45);
@@ -85,7 +91,8 @@
             // 
             // YellowBt
             // 
-            this.YellowBt.Location = new System.Drawing.Point(766, 186);
+            this.YellowBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.YellowBt.Location = new System.Drawing.Point(766, 246);
             this.YellowBt.Name = "YellowBt";
             this.YellowBt.Size = new System.Drawing.Size(75, 23);
             this.YellowBt.TabIndex = 4;
@@ -95,7 +102,8 @@
             // 
             // BlueBt
             // 
-            this.BlueBt.Location = new System.Drawing.Point(766, 215);
+            this.BlueBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BlueBt.Location = new System.Drawing.Point(766, 275);
             this.BlueBt.Name = "BlueBt";
             this.BlueBt.Size = new System.Drawing.Size(75, 23);
             this.BlueBt.TabIndex = 5;
@@ -105,7 +113,8 @@
             // 
             // BlackBt
             // 
-            this.BlackBt.Location = new System.Drawing.Point(766, 244);
+            this.BlackBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BlackBt.Location = new System.Drawing.Point(766, 304);
             this.BlackBt.Name = "BlackBt";
             this.BlackBt.Size = new System.Drawing.Size(75, 23);
             this.BlackBt.TabIndex = 6;
@@ -153,19 +162,27 @@
             this.Load.UseVisualStyleBackColor = true;
             this.Load.Click += new System.EventHandler(this.Load_Click);
             // 
-            // treeView1
+            // button1
             // 
-            this.treeView1.Location = new System.Drawing.Point(864, 37);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(296, 392);
-            this.treeView1.TabIndex = 11;
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(766, 161);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 45);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "Липкий квадрат";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1183, 531);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.Load);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.UnGroup);
@@ -180,6 +197,7 @@
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -201,7 +219,9 @@
         private System.Windows.Forms.Button UnGroup;
         private System.Windows.Forms.Button Save;
         private System.Windows.Forms.Button Load;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

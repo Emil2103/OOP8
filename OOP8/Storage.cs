@@ -7,12 +7,12 @@ using System.IO;
 
 namespace OOP8
 {
-    class Storage
+    class Storage: IObserver, ISubject
     {
         public int count;
         public int size;
         public Object[] obj;
-
+        private List<IObserver> observers = new List<IObserver>();
 
 
         public Storage(int size)
@@ -23,6 +23,7 @@ namespace OOP8
             for (int i = 0; i < size; i++)
             {
                 obj[i] = null;
+
             }
         }
 
@@ -33,10 +34,16 @@ namespace OOP8
                 if (obj[i] == null)
                 {
                     obj[i] = t;
+                    if (t is GooRectangle)
+                    {
+                        addObserver(t);
+                    }
+                    t.addObserver(this);
                     count++;
                     break;
                 }
             }
+            notifyEveryone();
 
         }
 
@@ -64,7 +71,16 @@ namespace OOP8
             {
                 obj[i] = null;
                 count--;
+                for (int j = i; j < size-1; j++)
+                    if (obj[j + 1] != null)
+                    {
+                        obj[j] = obj[j + 1];
+                        obj[j + 1] = null; 
+                    }
+                
             }
+            notifyEveryone();
+
         }
         public int getsize()
         {
@@ -72,18 +88,17 @@ namespace OOP8
         }
 
 
-        public void SaveObject(string pathToTheFile)
+        public void SaveObject(StreamWriter writer)
         {
             if (count != 0)
             {
-                using (StreamWriter writer = new StreamWriter(pathToTheFile, false, System.Text.Encoding.Default))
+
+                for (int i = 0; i < count; i++)
                 {
-                    for (int i = 0; i < count; i++)
-                    {
-                        if (obj[i] != null)
-                            obj[i].save(writer);
-                    }
+                    if (obj[i] != null)
+                        obj[i].save(writer);
                 }
+
             }
         }
 
@@ -97,13 +112,6 @@ namespace OOP8
 
                 if (shape != null)
                 {
-                    if (shape is CGroup)
-                    {
-                        (shape as CGroup).loadGroup(reader, factory);
-                        addObject(shape);
-                        continue;
-                    }
-
                     shape.load(reader);
                     addObject(shape);
                 }
@@ -114,18 +122,83 @@ namespace OOP8
             }
         }
 
-        public void loadShapes(string pathToTheFile, ObjectFactory factory)
-        {
-            using (StreamReader reader = new StreamReader(pathToTheFile, System.Text.Encoding.Default))
-            {
-                readingShapes(reader, factory);
-
-            }
-        }
-
         public void loadShapes(StreamReader reader, ObjectFactory factory)
         {
             readingShapes(reader, factory);
         }
+
+        public bool Contains(int id)
+        {
+            int i = 0;
+                while ( i != count && obj[i].getID() != id)
+                {
+                    if (obj[i] is CGroup)
+                    {
+                        return (obj[i] as CGroup).getShape().Contains(id);  
+                    }
+                    i++;
+                }
+
+            if (i != count)
+                return true;
+            else
+                return false;
+
+            
+        }
+
+        public void addObserver(IObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void removeObserver(IObserver observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public void notifyEveryone()
+        {
+            for (int i = 0; i < observers.Count; i++)
+                observers[i].onSubjectChanged(this);
+        }
+
+        public void onSubjectChanged(ISubject subject)
+        {
+            int i = 0;
+            if (subject is MyTreeView)
+            {
+                while (i != getsize())
+                {
+                    Object _obj = obj[i];
+                    if (_obj != null && _obj.getID() == (subject as MyTreeView).selected)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        if (_obj is CGroup)
+                        {
+                            if ((_obj as CGroup).getShape().Contains((subject as MyTreeView).selected) == true)
+                                break;
+                        }
+                    }
+                    i++;
+                }
+
+                if (obj[i] != null)
+                {
+                    Object _object = obj[i];
+                    bool tmp = _object.getFlag();
+                    _object.setFlag(true);
+                    _object.setSelect((_object.getSelect() == true ? false : true));
+                    _object.setFlag(tmp);
+                }
+                return;
+            }
+            notifyEveryone();
+        }
+
+
     }
 }

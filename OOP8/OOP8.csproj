@@ -57,8 +57,16 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GooRectangle.cs" />
     <Compile Include="ISerializable.cs" />
+    <Compile Include="MyTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MyTreeView.Designer.cs">
+      <DependentUpon>MyTreeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Object.cs" />
+    <Compile Include="Observers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage.cs" />

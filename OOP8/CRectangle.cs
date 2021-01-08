@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace OOP8
 {
-    class CRectangle : Object
+    public class CRectangle : Object
     {
         public CRectangle()
         {

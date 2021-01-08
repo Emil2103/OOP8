@@ -25,6 +25,8 @@ namespace OOP8
                     return new CTriangle();
                 case 'G':
                     return new CGroup();
+                case 'A':
+                    return new GooRectangle();
                 default:
                     return null;
             }

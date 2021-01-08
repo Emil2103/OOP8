@@ -15,7 +15,7 @@ namespace OOP8
     class CGroup : Object
     {
         protected int maxcount;
-        protected int count;
+        public int count;
         public Storage Stor;
 
         public CGroup()
@@ -23,7 +23,7 @@ namespace OOP8
             id = ID;
             ++ID;
             code = 'G';
-
+            selected = true;
         }
 
         public CGroup(int maxcount)
@@ -34,7 +34,7 @@ namespace OOP8
             this.maxcount = maxcount;
             count = 0;
             Stor = new Storage(maxcount);
-
+            selected = true;
 
         }
         ~CGroup()
@@ -55,6 +55,11 @@ namespace OOP8
             return true;
         }
         public override void createShape() { }
+
+        public int Count()
+        {
+            return count;
+        }
 
         public override void DrawShape(Graphics G)
         {
@@ -104,6 +109,11 @@ namespace OOP8
             {
                 if (Stor.obj[i] != null)
                     Stor.obj[i].setSelect(a);
+            }
+
+            if (!flag)
+            {
+                notifyEveryone();
             }
         }
 
@@ -188,6 +198,21 @@ namespace OOP8
             Stor.loadShapes(reader, factory);
             for (int i = 0; i < count; ++i)
                 this.circuit = Stor.obj[i].getCircuit();
+        }
+
+        public Storage getShape()
+        {
+            return Stor;
+        }
+
+        public override bool IntersectionShapes(GraphicsPath pth)
+        {
+            for(int i =0; i < count; i++)
+            {
+                if (Stor.obj[i].IntersectionShapes(pth))
+                    return true;
+            }
+            return false;
         }
     }
 }

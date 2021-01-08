@@ -27,27 +27,30 @@ namespace OOP8
         public int dy = 0;
         string pathToTheFileOfShapes = @"C:\Users\emil-\source\repos\OOP8\Save.txt";
         string pathToTheFileOfFormsParams = @"C:\Users\emil-\source\repos\OOP8\FormsParams.txt";
+        private MyTreeView TrView;
+
         public Form1()
         {
             InitializeComponent();
+
+            TrView = new MyTreeView(this);
+            TrView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            TrView.CheckBoxes = false;
+            TrView.Location = new System.Drawing.Point(864, 37);
+            TrView.Name = "TreeVIew";
+            TrView.Size = new System.Drawing.Size(296, 392);
+            TrView.TabIndex = 9;
+            TrView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TrView_AfterCheck);
+            Controls.Add(TrView);
+
             S = new Storage(100);
+            S.addObserver(TrView);
+            TrView.addObserver(S);
             bitmap = new Bitmap(sheet.Width, sheet.Height);
             G = Graphics.FromImage(bitmap);
             sheet.Image = bitmap;
             circuit = new RectangleF(sheet.Location.X - 11, sheet.Location.Y - 36, sheet.Width - 4, sheet.Height - 2);
-        }
-
-        private void sheet_Paint(object sender, PaintEventArgs e)
-        {
-            G.Clear(Color.White);
-            for (int i = 0; i < S.getsize(); i++)
-            {
-                if (S.obj[i] != null)
-                {
-                    S.obj[i].DrawShape(G);
-                }
-            }
-            sheet.Image = bitmap;
+            
         }
 
         private void sheet_MouseClick(object sender, MouseEventArgs e)
@@ -109,6 +112,11 @@ namespace OOP8
                         S.addObject(newObjTr);
                         this.Invalidate();
                         break;
+                    case 4:
+                        Object newObjGoC = new GooRectangle(e.X, e.Y, circuit, color);
+                        S.addObject(newObjGoC);
+                        this.Invalidate();
+                        break;
                 }
             }
         }
@@ -136,6 +144,7 @@ namespace OOP8
                     if (S.obj[i] != null && S.obj[i].getSelect())
                     {
                         S.deleteObject(i);
+                        i--;
                     }
                 }
                 this.Invalidate();
@@ -209,6 +218,7 @@ namespace OOP8
                     if (S.obj[i] != null)
                     {
                         S.deleteObject(i);
+                        i--;
                     }
                 }
                 this.Invalidate();
@@ -238,6 +248,7 @@ namespace OOP8
             DrCirc.Enabled = false;
             DrRec.Enabled = true;
             DrTr.Enabled = true;
+            button1.Enabled = true;
             t = 1;
         }
 
@@ -246,6 +257,7 @@ namespace OOP8
             DrRec.Enabled = false;
             DrCirc.Enabled = true;
             DrTr.Enabled = true;
+            button1.Enabled = true;
             t = 2;
         }
 
@@ -254,6 +266,7 @@ namespace OOP8
             DrTr.Enabled = false;
             DrRec.Enabled = true;
             DrCirc.Enabled = true;
+            button1.Enabled = true;
             t = 3;
         }
 
@@ -291,6 +304,7 @@ namespace OOP8
                 {
                     _group.addShape(S.obj[i]);
                     S.deleteObject(i);
+                    i--;
                 }
             }
             _group.setRectangleF(circuit);
@@ -303,9 +317,9 @@ namespace OOP8
             Storage DLCgroup = new Storage(S.getsize());
             for (int i = 0; i < S.getsize(); i++)
             {
-                if (S.obj[i] != null && S.obj[i].getSelect() == true && (S.obj[i] is CGroup))
+                if ((S.obj[i] is CGroup) && S.obj[i].getSelect() == true )
                 {
-                    Storage shapes = new Storage(S.getsize());
+                    Storage shapes = new Storage((S.obj[i] as CGroup).Count());
                     shapes.obj = ((CGroup)S.obj[i]).Ungroup();
                     for (int j = 0; j < shapes.getsize(); j++)
                     {
@@ -314,7 +328,7 @@ namespace OOP8
                     S.deleteObject(i);
                 }
             }
-            for (int i = 0; i < S.getsize(); i++)
+            for (int i = 0; i < DLCgroup.count; i++)
             {
                 S.addObject(DLCgroup.obj[i]);
             }
@@ -324,54 +338,100 @@ namespace OOP8
         {
             writer.WriteLine(this.Width.ToString());
             writer.WriteLine(this.Height.ToString());
-            writer.WriteLine(color);
+            writer.WriteLine("");
         }
 
         public virtual void load(StreamReader reader)
         {
             this.Width = int.Parse(reader.ReadLine());
             this.Height = int.Parse(reader.ReadLine());
-
-            switch (reader.ReadLine())
-            {
-                case "Yellow":
-                    {
-                        color = Color.Yellow;
-                        break;
-                    }
-                case "Blue":
-                    {
-                        color = Color.Blue;
-                        break;
-                    }
-                case "Black":
-                    {
-                        color = Color.Black;
-                        break;
-                    }
-            }
+            reader.ReadLine();
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
-            S.SaveObject(pathToTheFileOfShapes);
-            using (StreamWriter writer = new StreamWriter(pathToTheFileOfFormsParams, false, System.Text.Encoding.Default))
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog1.Title = "Сохранение файла";
+            saveFileDialog1.ShowDialog();
+            if (saveFileDialog1.FileName != "")
             {
-                this.save(writer);
+                using (StreamWriter writer = new StreamWriter(saveFileDialog1.FileName, false, System.Text.Encoding.Default))
+                {
+                    this.save(writer);
+                    S.SaveObject(writer);
+                }
             }
         }
 
         private void Load_Click(object sender, EventArgs e)
         {
-            using (StreamReader reader = new StreamReader(pathToTheFileOfFormsParams, System.Text.Encoding.Default))
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.ShowDialog();
+            if (openFileDialog1.FileName != "openFileDialog1")
             {
-                this.load(reader);
+                using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.Default))
+                {
+                    this.load(reader);
+                    ObjectFactory factory = new MyObjectFactory();
+                    S = new Storage(100);
+                    S.addObserver(TrView);
+                    TrView.addObserver(S);
+                    S.loadShapes(reader, factory);
+                    this.Invalidate();
+                }
+            }
+        }
+
+        private void TrView_AfterCheck(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            string str = e.Node.Text;
+            string[] arr = str.Split(' ');
+            TrView.selected = int.Parse(arr[0]);
+
+            TreeNode currentNode = e.Node;
+            Color currentColor;
+
+            if (currentNode.ForeColor == Color.Black)
+            {
+                currentColor = Color.Red;
+            }
+            else
+            {
+                currentColor = Color.Black;
             }
 
-            ObjectFactory factory = new MyObjectFactory();
-            S = new Storage(100);
-            S.loadShapes(pathToTheFileOfShapes, factory);
-            this.Invalidate();
+            while (currentNode.Parent != null)
+            {
+                currentNode = currentNode.Parent;
+            }
+
+            TrView.PaintBranch(currentNode, currentColor);
+            TrView.notifyEveryone();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            button1.Enabled = false;
+            DrRec.Enabled = true;
+            DrCirc.Enabled = true;
+            DrTr.Enabled = true;
+            t = 4;
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            G.Clear(Color.White);
+            for (int i = 0; i < S.getsize(); i++)
+            {
+                if (S.obj[i] != null)
+                {
+                    S.obj[i].DrawShape(G);
+                }
+            }
+            sheet.Image = bitmap;
         }
     }
 }
