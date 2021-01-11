@@ -25,8 +25,6 @@ namespace OOP8
         public int c; //выбор цвета
         public int dx = 0;
         public int dy = 0;
-        string pathToTheFileOfShapes = @"C:\Users\emil-\source\repos\OOP8\Save.txt";
-        string pathToTheFileOfFormsParams = @"C:\Users\emil-\source\repos\OOP8\FormsParams.txt";
         private MyTreeView TrView;
 
         public Form1()

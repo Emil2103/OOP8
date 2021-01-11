@@ -134,7 +134,8 @@ namespace OOP8
                 {
                     if (obj[i] is CGroup)
                     {
-                        return (obj[i] as CGroup).getShape().Contains(id);  
+                        if( (obj[i] as CGroup).getShape().Contains(id) == true)
+                            return true;
                     }
                     i++;
                 }
@@ -168,7 +169,7 @@ namespace OOP8
             int i = 0;
             if (subject is MyTreeView)
             {
-                while (i != getsize())
+                while (i != count)
                 {
                     Object _obj = obj[i];
                     if (_obj != null && _obj.getID() == (subject as MyTreeView).selected)
